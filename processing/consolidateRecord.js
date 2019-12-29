@@ -11,7 +11,7 @@ module.exports.consolidateRecord = function(sessionData) { // Update fishStat do
     fishStat.find()
         .then(fishes => {
             //console.log("fishStat = " + fishes, Boolean(fishes));
-            if (Object.keys(fishes).length > 0) {
+            if (Object.keys(fishes).length > 0) { // if fishes DB has records
                 //console.log("ENter fishes interation loop");
                 sessionData.fishes.forEach(function(fish1, index){
                     foundFish = false
@@ -44,7 +44,7 @@ module.exports.consolidateRecord = function(sessionData) { // Update fishStat do
                             .catch(err => console.log("Matching: new Fish Save ERROR: " + err));
                     }   
                 })
-            } else {
+            } else { // if fishes DB has no record
                // console.log("fishes db not found");
                 sessionData.fishes.forEach(function(fish){
                     const newFish = new fishStat({

@@ -47,7 +47,15 @@ router.route('/upload').post((req, res) => {
     const numberOfLogins = sessionData.numberOfLogins;
     const fishes = sessionData.fishes;
 
-    console.log(sessionData.uuid)
+    console.log("POST DATA uuid = " + uuid)
+    console.log("POST DATA lastLogin = " + lastLogin)
+    console.log("POST DATA lastLogout = " + lastLogout)
+    console.log("POST DATA signupDate = " + signupDate)
+    console.log("POST DATA #ofLogins = " + numberOfLogins)
+    // console.log("POST DATA fishes[0] = " + fishes[0])
+    // console.log("POST DATA fishes[1] = " + fishes[1])
+    // console.log("POST DATA fishes[100] = " + fishes[100])
+
 
     const newSession = new session({
         uuid,
@@ -62,6 +70,8 @@ router.route('/upload').post((req, res) => {
         .then(() => {
             dataProc.updateUserInfo(newSession);
             dataProc.consolidateRecord(newSession);
+            //console.log("===== newSession LOG ======")
+            //console.log(newSession);
             res.json('iOS data added to record');
         })
         .catch(err => res.status(400).json('Error: ' + err))
