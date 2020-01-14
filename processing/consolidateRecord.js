@@ -23,7 +23,7 @@ module.exports.consolidateRecord = function(sessionData) { // Update fishStat do
                             fish2.numberOfQuizs += fish1.numberOfQuizs;
                             fish2.numberOfWins += fish1.numberOfWins;
                             fish2.save()
-                                .then(() => console.log("fishStat updated"))
+                                .then(() => {}) //console.log("fishStat updated"))
                                 .catch(err => console.log("FishStat update error: " + err))
                         }
                     })
@@ -65,84 +65,54 @@ module.exports.consolidateRecord = function(sessionData) { // Update fishStat do
         .catch(err => console.log("Err: " + err));
 }
 
-module.exports.updateUserInfo = function(sessionData) { // Update userstat doc using the current post data (from one user)
-    const thisUuid = sessionData.uuid
+module.exports.updateUserInfo = function(userData) { // Update userstat doc using the current post data (from one user)
+    const thisUuid = userData.uuid
     var numberOfUsers = 0
     var numberOfActives = 0
     var foundSessionUser = false
     console.log("Enter updateUserInfo user = " + thisUuid);
-
-    // user.findOne({'uuid': thisUuid}, (err, u) => { // update user status
-    //     console.log("usr = " + u);
-    //     if (u) {
-    //         u.uuid = sessionData.uuid;
-    //         u.numberOfLogins += 1;
-    //         u.lastLogin = sessionData.login;
-    //         u.lastLogout = sessionData.logout;
-    //         u.signupDate = sessionData.signupDate;
-    //         u.isActive = true;
-    //         console.log("user update before save: "+ u);
-    //         u.save().then(() => console.log("User Info updated: "+u)).catch(err => console.log("UserInfo update Error: " + err));
-    //     } else {
-    //         const newUser = new user({
-    //             uuid: sessionData.uuid,
-    //             lastLogin: sessionData.login,
-    //             lastLogout: sessionData.logout,
-    //             signupDate: sessionData.signupDate,
-    //             numberOfLogins: 1,
-    //             isActive: true
-    //         })
-    //         newUser.save()
-    //             .then(() => console.log("newUser added: " + newUser))
-    //             .catch(err => console.log("newUser saving err: " + err))
-    //     }
-
-    //     if (err) {
-    //         console.log("user.findOne err: " + err)
-    //     }
-    // })
 
     // update all user stats
     user.find()
         .then(users => {
             numberOfUsers = Object.keys(users).length;
             numberOfActives = numberOfUsers
-            console.log("user.find() users= " + users)
+            //console.log("user.find() users= " + users)
             users.forEach(function(thisUser) {
                 const now = Date.parse(Date())
                 const oneDay = 24*60*60*1000;
                 const diffInDays = Math.round(Math.abs(now - Date.parse(Date(thisUser.lastLogin)))/oneDay);
-                console.log("user.find() diffDays = " + diffInDays + " threshold = " + activeThreshold + " #users = "+ numberOfUsers);
+                //console.log("user.find() diffDays = " + diffInDays + " threshold = " + activeThreshold + " #users = "+ numberOfUsers);
                 if ( diffInDays > activeThreshold ) {
                     thisUser.isActive = false 
                     numberOfActives = numberOfUsers - 1
-                    thisUser.save().then(() => {console.log("user.find() u = " + thisUser)}).catch(err => console.log("userstat update err " + err))
+                    thisUser.save().then(() => { /*console.log("user.find() u = " + thisUser)*/}).catch(err => console.log("userstat update err " + err))
                 }
                 if (thisUser.uuid === thisUuid ) { // update sessionUserStatus
                     foundSessionUser = true;
                     thisUser.numberOfLogins += 1;
-                    thisUser.lastLogin = sessionData.lastLogin;
-                    thisUser.lastLogout = sessionData.lastLogout;
-                    thisUser.signupDate = sessionData.signupDate;
+                    thisUser.lastLogin = userData.lastLogin;
+                    thisUser.lastLogout = userData.lastLogout;
+                    thisUser.signupDate = userData.signupDate;
                     thisUser.isActive = true;
-                    console.log("user update before save: "+ thisUser);
-                    thisUser.save().then(() => console.log("User Info updated: "+thisUser)).catch(err => console.log("UserInfo update Error: " + err));
+                    //console.log("user update before save: "+ thisUser);
+                    thisUser.save().then(() => { /*console.log("User Info updated: "+thisUser)*/}).catch(err => console.log("UserInfo update Error: " + err));
                 }
             })
         })
         .then(() => {
             if (foundSessionUser === false) {
                 const newUser = new user({
-                    uuid: sessionData.uuid,
-                    lastLogin: sessionData.lastLogin,
-                    lastLogout: sessionData.lastLogout,
-                    signupDate: sessionData.signupDate,
-                    numberOfLogins: sessionData.numberOfLogins,
+                    uuid: userData.uuid,
+                    lastLogin: userData.lastLogin,
+                    lastLogout: userData.lastLogout,
+                    signupDate: userData.signupDate,
+                    numberOfLogins: userData.numberOfLogins,
                     isActive: true
                 })
-                console.log("newUser: numberOfLogins = " + sessionData.numberOfLogins)
+                console.log("newUser: numberOfLogins = " + userData.numberOfLogins)
                 newUser.save()
-                    .then(() => console.log("newUser added: " + newUser))
+                    .then(() => { /*console.log("newUser added: " + newUser)*/ })
                     .catch(err => console.log("newUser saving err: " + err))
             }
         })
@@ -151,12 +121,12 @@ module.exports.updateUserInfo = function(sessionData) { // Update userstat doc u
         userStat.find()
             .then(record => {
                 if(Object.keys(record).length > 0) { // if userstat db is not empty}
-                console.log("record = " + record);
+                //console.log("record = " + record);
                     record.forEach(function(r){
                         r.numberOfActives = numberOfActives;
                         r.numberOfUsers = numberOfUsers;
-                        console.log("before record.save: " + r)
-                        r.save().then(() => console.log("userStat updated: " + r)).catch(err => console.log("userStat update err " + err))
+                        //console.log("before record.save: " + r)
+                        r.save().then(() => { /*console.log("userStat updated: " + r)*/}).catch(err => console.log("userStat update err " + err))
                     })
                 } else {
                     const newRecord = new userStat({

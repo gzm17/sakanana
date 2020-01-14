@@ -1,6 +1,6 @@
 var mongoose = require("mongoose");
 
-//This defines a single session from one user schema for mongoose
+//This defines a single user plus his/her latest session dates schema for mongoose
 var userSchema = new mongoose.Schema({
     uuid: {type: String, required: true},
     lastLogin: {type: Date, required: true},

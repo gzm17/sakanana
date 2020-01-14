@@ -1,6 +1,6 @@
 var mongoose = require("mongoose");
 
-//This defines a single fish stat schema for mongoose. Note the difference between iOS and here
+//This defines a single fish stat schema for all users. Note the difference between iOS and here
 var fishStatSchema = new mongoose.Schema({
     id: {type: Number, required: true},
     kanji: {type: String, required: true},

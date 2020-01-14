@@ -2,7 +2,7 @@ var mongoose = require("mongoose");
 var User = require("./user");
 var FishStat = require("./fishstat");
 
-//This defines myBorrowedBooks schema for mongoose: duration (length of time) is in weeks
+//This doc captures all uploaded data for each user-session (at termination)
 var sessionSchema = new mongoose.Schema({
     uuid: {type: mongoose.Schema.Types.String, ref: 'User'},
     lastLogin: {type: Date, required: true},

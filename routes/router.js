@@ -35,7 +35,7 @@ router.route('/fishdetails').get((req, res) => {
         .catch(err => res.status(400).json('Error: ' + err))
 });
 
-router.route('/upload').post((req, res) => {
+router.route('/uploadSessionEnd').post((req, res) => {
     console.log('POST triggered /upload')
     // console.log(req.body)
     const sessionData = req.body;
@@ -47,15 +47,7 @@ router.route('/upload').post((req, res) => {
     const numberOfLogins = sessionData.numberOfLogins;
     const fishes = sessionData.fishes;
 
-    console.log("POST DATA uuid = " + uuid)
-    console.log("POST DATA lastLogin = " + lastLogin)
-    console.log("POST DATA lastLogout = " + lastLogout)
-    console.log("POST DATA signupDate = " + signupDate)
-    console.log("POST DATA #ofLogins = " + numberOfLogins)
-    // console.log("POST DATA fishes[0] = " + fishes[0])
-    // console.log("POST DATA fishes[1] = " + fishes[1])
-    // console.log("POST DATA fishes[100] = " + fishes[100])
-
+    console.log("POST DATA SessionEnd uuid = " + uuid)
 
     const newSession = new session({
         uuid,
@@ -68,13 +60,34 @@ router.route('/upload').post((req, res) => {
 
     newSession.save()
         .then(() => {
-            dataProc.updateUserInfo(newSession);
+            //dataProc.updateUserInfo(newSession); // This is done via /uploadSessionStart
             dataProc.consolidateRecord(newSession);
-            //console.log("===== newSession LOG ======")
-            //console.log(newSession);
-            res.json('iOS data added to record');
+            res.json('New session data added to record at the end of session');
         })
         .catch(err => res.status(400).json('Error: ' + err))
     });
+
+    // Process upload of user info at the start of a session
+    router.route('/uploadSessionStart').post((req, res) => {
+        console.log('POST received /uploadSessionStart')
+        const userData = req.body;
+    
+        const uuid = userData.uuid;
+        const lastLogin = userData.lastLogin;
+        const lastLogout = userData.lastLogout;
+        const signupDate = userData.signupDate;
+        const numberOfLogins = userData.numberOfLogins;
+    
+        console.log("POST DATA SessionStart uuid = " + uuid)
+
+        const newUser = new users({
+            uuid,
+            lastLogin,
+            lastLogout,
+            signupDate,
+            numberOfLogins,
+        });
+        dataProc.updateUserInfo(newUser);
+        });
     
     module.exports = router
